@@ -171,6 +171,24 @@ void CartesianVelocityExampleController::update(const ros::Time&,
   double v_y = std::cos(angle) * current_velocity.linear.y; 
   double v_z = std::cos(angle) * current_velocity.linear.z; 
   
+
+  
+  current_velocity.angular.x = alpha*current_velocity.angular.x +
+    (1-alpha) * v_max/2.0 * new_target_velocity.angular.x;
+  
+  current_velocity.angular.y = alpha*current_velocity.angular.y +
+    (1-alpha) * v_max/2.0 * new_target_velocity.angular.y;
+  
+  current_velocity.angular.z = alpha*current_velocity.angular.z +
+    (1-alpha) * v_max/2.0 * new_target_velocity.angular.z;
+  
+  double va_x = std::cos(angle) * current_velocity.angular.x; 
+  double va_y = std::cos(angle) * current_velocity.angular.y; 
+  double va_z = std::cos(angle) * current_velocity.angular.z; 
+  
+
+
+
   bool is_in_collision = state_handle.getRobotState().cartesian_collision[0] > 0 ||
                          state_handle.getRobotState().cartesian_collision[1] > 0 ||
                          state_handle.getRobotState().cartesian_collision[2] > 0;
@@ -196,13 +214,16 @@ void CartesianVelocityExampleController::update(const ros::Time&,
 	    << std::endl;
   */
   
-  std::array<double, 6> command = {{v_x, v_y, v_z, 0.0, 0.0, 0.0}};
+  std::array<double, 6> command = {{v_x, v_y, v_z, va_x, va_y, va_z}};
   velocity_cartesian_handle_->setCommand(command);
 
   geometry_msgs::Twist vel_msg;
   vel_msg.linear.x = v_x;
-  vel_msg.angular.y = v_y;
-  vel_msg.angular.z = v_z;
+  vel_msg.linear.y = v_y;
+  vel_msg.linear.z = v_z;
+  vel_msg.angular.x = va_x;
+  vel_msg.angular.y = va_y;
+  vel_msg.angular.z = va_z;
 
   was_in_contact = is_in_contact;
   

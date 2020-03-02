@@ -17,7 +17,6 @@
   <node name="controller_spawner2" pkg="controller_manager" type="spawner" respawn="false" output="screen"
 	args="--stopped position_joint_trajectory_controller"/>
   
-
   <include file="$(find panda_robot)/launch/move_group.launch">
     <arg name="load_gripper" value="$(arg load_gripper)" />
   </include>
